@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Region Watch</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start ;
+            margin-top: 50px;
+            height: 100vh;
+            background: linear-gradient(145deg, #1f1c2c, #928dab);
+            font-family: Arial, sans-serif;
+            color: #ffffff;
+        }
+        .container {
+            width: 300px;
+            padding: 20px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4), 0 1px 5px rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        .title {
+            font-size: 1.5em;
+            text-align: center;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+        .main-time {
+            font-size: 2.5em;
+            font-weight: bold;
+            text-align: center;
+            color: #ffffff;
+            background: linear-gradient(145deg, #ff4e50, #f9d423);
+            padding: 10px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2), inset 0 1px 5px rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+        .world-clock {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .clock-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-radius: 15px;
+            background: #ffffff;
+            color: #333;
+            font-weight: bold;
+            box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.2), -8px -8px 16px rgba(255, 255, 255, 0.5);
+            background: linear-gradient(145deg, #e8e8e8, #f0f0f0);
+        }
+        .add-region-btn, .dst-toggle {
+            margin-top: 20px;
+            padding: 10px;
+            width: 100%;
+            font-size: 1em;
+            color: #ffffff;
+            background: linear-gradient(145deg, #667eea, #764ba2);
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .add-region-btn:hover, .dst-toggle:hover {
+            background: linear-gradient(145deg, #6a00f4, #c800c8);
+        }
+        .region-dropdown {
+            display: none;
+            margin-top: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            color: #ffffff;
+        }
+        .region-option {
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 5px 0;
+            background: linear-gradient(145deg, #a8c0ff, #3f2b96);
+        }
+        .region-option:hover {
+            background: linear-gradient(145deg, #3f2b96, #a8c0ff);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">Time</div>
+        <div class="main-time" id="main-time">--:--</div>
+
+        <div class="world-clock" id="world-clock">
+            <div class="clock-card">
+                <div>New York</div>
+                <div id="ny-time">--:--</div>
+            </div>
+            
+            <div class="clock-card">
+                <div>Tokyo</div>
+                <div id="tokyo-time">--:--</div>
+            </div>
+        </div>
+        <div class="add-region-btn" onclick="toggleDropdown()">+ Add Region</div>
+        <div class="region-dropdown" id="region-dropdown">
+            <div class="region-option" onclick="addRegion('Sydney', 'Australia/Sydney')">Sydney</div>
+            <div class="region-option" onclick="addRegion('Moscow', 'Europe/Moscow')">Moscow</div>
+            <div class="region-option" onclick="addRegion('Dubai', 'Asia/Dubai')">Dubai</div>
+            <div class="region-option" onclick="addRegion('Mumbai', 'Asia/Kolkata')">Mumbai</div>
+        </div>
+        <div class="dst-toggle" onclick="toggleDST()">Toggle DST</div>
+    </div>
+    <script>
+        function updateTimes() {
+            const mainTime = new Date();
+            document.getElementById("main-time").innerText = mainTime.toLocaleTimeString();
+            const nyTime = new Date(mainTime.toLocaleString("en-US", { timeZone: "America/New_York" }));
+            const londonTime = new Date(mainTime.toLocaleString("en-GB", { timeZone: "Europe/London" }));
+            const tokyoTime = new Date(mainTime.toLocaleString("en-JP", { timeZone: "Asia/Tokyo" }));
+            document.getElementById("ny-time").innerText = nyTime.toLocaleTimeString();
+            
+            document.getElementById("tokyo-time").innerText = tokyoTime.toLocaleTimeString();
+        }
+        function toggleDropdown() {
+            const dropdown = document.getElementById("region-dropdown");
+            dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
+        }
+        function addRegion(city, timeZone) {
+            const worldClock = document.getElementById("world-clock");
+            const card = document.createElement("div");
+            card.classList.add("clock-card");
+            card.innerHTML = `<div>${city}</div><div id="${city.toLowerCase()}-time">--:--</div>`;
+            worldClock.appendChild(card);
+            setInterval(() => {
+                const time = new Date(new Date().toLocaleString("en-US", { timeZone }));
+                document.getElementById(`${city.toLowerCase()}-time`).innerText = time.toLocaleTimeString();
+            }, 1000);
+
+            toggleDropdown();
+        }
+        function toggleDST() {
+            alert("DST toggle feature coming soon!");
+        }
+        setInterval(updateTimes, 1000);
+    </script>
+</body>
+</html>
